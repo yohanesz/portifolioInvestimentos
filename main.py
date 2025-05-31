@@ -72,7 +72,6 @@ def algoritmo_genetico():
     melhor = populacao[melhor_idx]
     return melhor, historico
 
-# 🌍 AG com Ilhas
 def algoritmo_genetico_ilhas():
     ilhas = [inicializar_populacao() for _ in range(NUM_ILHAS)]
     historico = []
@@ -91,7 +90,6 @@ def algoritmo_genetico_ilhas():
 
             ilhas[i] = np.array(nova_populacao)
 
-        # 🌐 Migração entre ilhas
         if (geracao + 1) % MIGRACAO_FREQ == 0:
             for i in range(NUM_ILHAS):
                 fonte = ilhas[i]
@@ -101,13 +99,11 @@ def algoritmo_genetico_ilhas():
                 migrantes = fonte[melhores_indices]
                 destino[:MIGRANTES] = migrantes
 
-        # 🔥 Melhor fitness entre as ilhas
         melhor_fitness = max(
             np.max([avaliar_fitness(ind) for ind in ilha]) for ilha in ilhas
         )
         historico.append(melhor_fitness)
 
-    # 🔍 Melhor indivíduo global
     melhor_individuo = None
     melhor_fitness = -np.inf
     for ilha in ilhas:
@@ -119,18 +115,15 @@ def algoritmo_genetico_ilhas():
 
     return melhor_individuo, historico
 
-# ⚙️ Cálculo Manual (linha constante)
 pesos_manual = np.array([1/NUM_ATIVOS]*NUM_ATIVOS)
 retorno_manual = np.dot(pesos_manual, media_retorno) * 252
 risco_manual = np.sqrt(np.dot(pesos_manual.T, np.dot(cov_matriz * 252, pesos_manual)))
 sharpe_manual = retorno_manual / risco_manual
 historico_manual = [sharpe_manual] * GERACOES
 
-# ▶️ Executar os algoritmos
 melhor_tradicional, historico_tradicional = algoritmo_genetico()
 melhor_ilhas, historico_ilhas = algoritmo_genetico_ilhas()
 
-# 📈 Plotar gráfico de comparação
 plt.figure(figsize=(10,6))
 plt.plot(historico_tradicional, label='AG Tradicional', color='red')
 plt.plot(historico_ilhas, label='AG com Ilhas', color='green')
